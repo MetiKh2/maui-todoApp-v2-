@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Todo.MVVM.Views.MainView"
+             xmlns:Converter="clr-namespace:Tasker.Converter"
+             Title="MainView">
+    <ContentPage.Resources>
+        <Converter:ColorConverter x:Key="ColorConverter" />
+    </ContentPage.Resources>
+
+    <Grid Margin="15" RowDefinitions="0.1*,0.3*,0.8*">
+        <Label Text="My Tasks" StyleClass="DarkBlue, Header" />
+        
+        
+        <Grid Grid.Row="1" RowDefinitions="0.2*, 0.8*" >
+            <Label Text="CATEGORIES" StyleClass="LightBlue,SubHeader" />
+            <CollectionView Grid.Row="1" ItemsSource="{Binding Categories}">
+                <CollectionView.ItemsLayout>
+                    <LinearItemsLayout Orientation="Horizontal" ItemSpacing="5" />
+                </CollectionView.ItemsLayout>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Padding="10">
+                            <RoundRectangle />
+                            <VerticalStackLayout Padding="15" Spacing="10">
+                                <Label StyleClass="LightBlue" Text="{Binding PendingTasks,StringFormat='{0} Tasks'}" />
+                                <Label StyleClass="DarkBlue, CardTitle" Text="{Binding CategoryName}" />
+                                <ProgressBar Progress="{Binding Percentage}" ProgressColor="{Binding Color,Converter={StaticResource ColorConverter}}"/>
+                            </VerticalStackLayout>
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </Grid>
+        
+        
+        
+        <Grid Grid.Row="2" RowDefinitions="0.2*, 0.8*" >
+            <Label Text="PENDING TASKS" StyleClass="LightBlue, SubHeader" />
+            <CollectionView Grid.Row="1" ItemsSource="{Binding Tasks}" ItemsUpdatingScrollMode="KeepLastItemInView" >
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Frame BorderColor="Transparent" >
+                            <HorizontalStackLayout>
+                                <CheckBox x:Name="ChkBox" IsChecked="{Binding Completed}" VerticalOptions="Center" 
+                                          Color="{Binding TaskColor,Converter={StaticResource ColorConverter}}" CheckedChanged="ChkBox_CheckedChanged" />
+                                <Label Text="{Binding TaskName}" VerticalOptions="Center" >
+                                    <Label.Triggers>
+                                        <DataTrigger Binding="{Binding Source={x:Reference ChkBox}, Path=IsChecked}" Value="True" TargetType="Label">
+                                            <Setter Property="TextDecorations" Value="Strikethrough" />
+                                        </DataTrigger>
+                                    </Label.Triggers>
+                                </Label>
+                            </HorizontalStackLayout>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </Grid>
+        <Button Grid.Row="2" Text="+" Clicked="Button_Clicked" Style="{StaticResource CircularButton}" />
+    </Grid>
+</ContentPage>
